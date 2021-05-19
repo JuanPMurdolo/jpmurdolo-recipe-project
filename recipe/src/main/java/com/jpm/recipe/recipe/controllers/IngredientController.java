@@ -1,7 +1,6 @@
 package com.jpm.recipe.recipe.controllers;
 
 import com.jpm.recipe.recipe.commands.IngredientCommand;
-import com.jpm.recipe.recipe.commands.RecipeCommand;
 import com.jpm.recipe.recipe.services.IngredientService;
 import com.jpm.recipe.recipe.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,15 +14,22 @@ public class IngredientController {
 
 
     private final IngredientService ingredientService;
+    private final RecipeService recipeService;
 
-    public IngredientController(IngredientService ingredientService) {
+    public IngredientController(IngredientService ingredientService, RecipeService recipeService) {
         this.ingredientService = ingredientService;
+        this.recipeService = recipeService;
     }
 
-    @RequestMapping("/ingredient/show/{id}")
-    public String showById(@PathVariable String id, Model model){
-        model.addAttribute("ingredient", ingredientService.findById(Long.valueOf(id)));
-        return "ingredient/show";
+    @GetMapping
+    @RequestMapping("/recipe/{recipeId}/ingredients")
+    public String listIngredients(@PathVariable String recipeId, Model model){
+        log.debug("Getting ingredient list for recipe id: " + recipeId);
+
+        // use command object to avoid lazy load errors in Thymeleaf.
+        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(recipeId)));
+
+        return "recipe/ingredient/show";
     }
 
     @RequestMapping("ingredient/new")
