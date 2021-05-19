@@ -7,15 +7,7 @@ import java.util.Set;
 
 public interface IngredientService {
 
-    Set<Ingredient> getIngredients();
-
-    Ingredient findById(Long l);
-
-    IngredientCommand findCommandById(Long l);
+    IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId);
 
     IngredientCommand saveIngredientCommand(IngredientCommand command);
-
-    void deleteById(Long idToDelete);
-
-    IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId);
 }
