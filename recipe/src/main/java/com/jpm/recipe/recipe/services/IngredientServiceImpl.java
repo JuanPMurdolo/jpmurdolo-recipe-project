@@ -21,11 +21,13 @@ import java.util.Set;
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientRepository ingredientRepository;
+    private final RecipeRepository recipeRepository;
     private final IngredientCommandToIngredient ingredientCommandToIngredient;
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
 
-    public IngredientServiceImpl(IngredientRepository ingredientRepository, IngredientCommandToIngredient ingredientCommandToIngredient, IngredientToIngredientCommand ingredientToIngredientCommand) {
+    public IngredientServiceImpl(IngredientRepository ingredientRepository, RecipeRepository recipeRepository, IngredientCommandToIngredient ingredientCommandToIngredient, IngredientToIngredientCommand ingredientToIngredientCommand) {
         this.ingredientRepository = ingredientRepository;
+        this.recipeRepository = recipeRepository;
         this.ingredientCommandToIngredient = ingredientCommandToIngredient;
         this.ingredientToIngredientCommand = ingredientToIngredientCommand;
     }
@@ -65,5 +67,29 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public void deleteById(Long idToDelete) {
         ingredientRepository.deleteById(idToDelete);
+    }
+
+    @Override
+    public IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+
+        Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+
+        if (!recipeOptional.isPresent()){
+            //todo impl error handling
+            log.error("recipe id not found. Id: " + recipeId);
+        }
+
+        Recipe recipe = recipeOptional.get();
+
+        Optional<IngredientCommand> ingredientCommandOptional = recipe.getIngredients().stream()
+                .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                .map( ingredient -> ingredientToIngredientCommand.convert(ingredient)).findFirst();
+
+        if(!ingredientCommandOptional.isPresent()){
+            //todo impl error handling
+            log.error("Ingredient id not found: " + ingredientId);
+        }
+
+        return ingredientCommandOptional.get();
     }
 }

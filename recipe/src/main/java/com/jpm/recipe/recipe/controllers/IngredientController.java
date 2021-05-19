@@ -29,7 +29,7 @@ public class IngredientController {
         // use command object to avoid lazy load errors in Thymeleaf.
         model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(recipeId)));
 
-        return "recipe/ingredient/show";
+        return "recipe/ingredient/list";
     }
 
     @RequestMapping("ingredient/new")
@@ -50,7 +50,7 @@ public class IngredientController {
     public String saveOrUpdate(@ModelAttribute IngredientCommand command){
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
 
-        return "redirect:/ingredient/show/" + savedCommand.getId();
+        return "redirect:/ingredient/list/" + savedCommand.getId();
     }
 
     @GetMapping
@@ -61,5 +61,13 @@ public class IngredientController {
 
         ingredientService.deleteById(Long.valueOf(id));
         return "redirect:/";
+    }
+
+    @GetMapping
+    @RequestMapping("recipe/{recipeId}/ingredient/{id}/show")
+    public String showRecipeIngredient(@PathVariable String recipeId,
+                                       @PathVariable String id, Model model){
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.valueOf(recipeId), Long.valueOf(id)));
+        return "recipe/ingredient/show";
     }
 }
