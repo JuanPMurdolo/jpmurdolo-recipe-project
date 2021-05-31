@@ -3,6 +3,7 @@ package com.jpm.recipe.recipe.services;
 import com.jpm.recipe.recipe.commands.RecipeCommand;
 import com.jpm.recipe.recipe.converters.RecipeCommandToRecipe;
 import com.jpm.recipe.recipe.converters.RecipeToRecipeCommand;
+import com.jpm.recipe.recipe.exceptions.NotFoundException;
 import com.jpm.recipe.recipe.model.Recipe;
 import com.jpm.recipe.recipe.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,8 @@ public class RecipeServiceImpl implements RecipeService {
         Optional<Recipe> recipeOptional = recipeRepository.findById(l);
 
         if (!recipeOptional.isPresent()) {
-            throw new RuntimeException("Recipe Not Found!");
+            //throw new RuntimeException("Recipe Not Found!");
+            throw new NotFoundException("Receta no encontrada");
         }
 
         return recipeOptional.get();
